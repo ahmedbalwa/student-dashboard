@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Ultra Pro Edition</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="description" content="Professional Student Management Dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Cursor Trail Canvas -->
+    <canvas id="cursorTrail" class="cursor-trail" aria-hidden="true"></canvas>
+    
+    <!-- Floating Particles Container -->
+    <div class="floating-particles" id="floatingParticles" aria-hidden="true">
+        <!-- JS will populate with floating divs -->
+    </div>
+
+<div class="dashboard">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="8" fill="var(--primary)"/>
+                    <path d="M8 12h16M8 16h12M8 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2>Dashboard</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="students">
+                <span class="nav-icon">👥</span>
+                <span>Students</span>
+            </a>
+            <a href="#" class="nav-item" data-page="courses">
+                <span class="nav-icon">📚</span>
+                <span>Courses</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <span class="nav-icon">📊</span>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <!-- Dark Mode Toggle -->
+        <div class="theme-toggle">
+            <span class="theme-label">Dark Mode</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="shortcuts-hint" onclick="showShortcuts()">
+                <span>⌨️ Keyboard Shortcuts</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+        
+        <!-- Header -->
+        <header class="main-header">
+            <div>
+                <h1>Student Management</h1>
+                <p class="subtitle">Manage and track your students efficiently</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="exportToCSV()" title="Export to CSV">
+                    📥 Export CSV
+                </button>
+                <button class="btn btn-primary" onclick="openModal()">
+                    <span>+</span> Add Student
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Cards with Charts -->
+        <div class="stats-grid">
+            <div class="stat-card glass">
+                <div class="stat-icon stat-icon-primary">👥</div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Students</span>
+                    <span class="stat-value" id="count">0</span>
+                </div>
+                <div class="stat-trend stat-trend-up">
+                    <span>↑ 12%</span>
+                </div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon stat-icon-success">✓</div>
+                <div class="stat-info">
+                    <span class="stat-label">Active Courses</span>
+                    <span class="stat-value">5</span>
+                </div>
+                <div class="stat-trend stat-trend-up">
+                    <span>↑ 5%</span>
+                </div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon stat-icon-warning">⭐</div>
+                <div class="stat-info">
+                    <span class="stat-label">Avg Progress</span>
+                    <span class="stat-value" id="avgProgress">0%</span>
+                </div>
+                <div class="progress-ring">
+                    <svg viewBox="0 0 36 36">
+                        <path class="progress-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        <path class="progress-ring-fill" id="progressRing" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon stat-icon-info">📈</div>
+                <div class="stat-info">
+                    <span class="stat-label">This Month</span>
+                    <span class="stat-value" id="thisMonth">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section glass">
+            <div class="chart-header">
+                <h3>Enrollment Trends</h3>
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-dot" style="background: var(--primary)"></span>Web</span>
+                    <span class="legend-item"><span class="legend-dot" style="background: var(--success)"></span>Data</span>
+                    <span class="legend-item"><span class="legend-dot" style="background: var(--warning)"></span>UI/UX</span>
+                    <span class="legend-item"><span class="legend-dot" style="background: var(--info)"></span>Mobile</span>
+                    <span class="legend-item"><span class="legend-dot" style="background: var(--danger)"></span>App</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="enrollmentChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search" placeholder="Search students by name...">
+            </div>
+            
+            <select id="filter" class="filter-select">
+                <option value="all">All Courses</option>
+                <option value="Web">Web Development</option>
+                <option value="Data">Data Science</option>
+                <option value="UI">UI/UX Design</option>
+                <option value="Mobile">Mobile Development</option>
+                <option value="App">App Development</option>
+            </select>
+            
+            <select id="sort" class="filter-select">
+                <option value="newest">Sort: Newest First</option>
+                <option value="oldest">Sort: Oldest First</option>
+                <option value="name-asc">Sort: Name A-Z</option>
+                <option value="name-desc">Sort: Name Z-A</option>
+            </select>
+            
+            <!-- Bulk Actions -->
+            <div class="bulk-actions" id="bulkActions" style="display: none;">
+                <span class="selected-count" id="selectedCount">0 selected</span>
+                <button class="btn btn-danger btn-sm" onclick="bulkDelete()">🗑️ Delete Selected</button>
+                <button class="btn btn-secondary btn-sm" onclick="clearSelection()">Clear</button>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-container glass">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="th-checkbox">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                        </th>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Email Address</th>
+                        <th>Course</th>
+                        <th>Progress</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentList">
+                    <!-- Students will be rendered here -->
+                </tbody>
+            </table>
+            
+            <!-- Skeleton Loading -->
+            <div class="skeleton-container" id="skeletonLoader">
+                <!-- Skeleton rows will be generated by JS -->
+            </div>
+            
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">📭</div>
+                <h3>No students found</h3>
+                <p>Try adjusting your search or filter criteria</p>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+    <div class="modal-overlay" onclick="closeModal()"></div>
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalTitle">Add New Student</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        
+        <form id="studentForm" onsubmit="handleSubmit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter student name" required>
+                    <span class="error-message" id="nameError"></span>
+                </div>
+                
+                <div class="form-group avatar-upload">
+                    <label>Avatar</label>
+                    <div class="avatar-preview" id="avatarPreview">
+                        <span id="avatarInitial">?</span>
+                    </div>
+                    <input type="hidden" id="avatar" name="avatar">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="student@example.com" required>
+                <span class="error-message" id="emailError"></span>
+            </div>
+            
+            <div class="form-group">
+                <label for="course">Course</label>
+                <select id="course" name="course" required>
+                    <option value="">Select a course</option>
+                    <option value="Web">Web Development</option>
+                    <option value="Data">Data Science</option>
+                    <option value="UI">UI/UX Design</option>
+                    <option value="Mobile">Mobile Development</option>
+                    <option value="App">App Development</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="progress">Course Progress (%)</label>
+                <input type="range" id="progress" name="progress" min="0" max="100" value="0" oninput="updateProgressLabel(this.value)">
+                <span class="progress-label" id="progressLabel">0%</span>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Save Student</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <span class="toast-message" id="toastMessage"></span>
+</div>
+
+<!-- Confetti Container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal" id="deleteModal">
+    <div class="modal-overlay" onclick="closeDeleteModal()"></div>
+    <div class="modal-box modal-small">
+        <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button class="modal-close" onclick="closeDeleteModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p id="deleteMessage">Are you sure you want to delete this student? This action cannot be undone.</p>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Keyboard Shortcuts Modal -->
+<div class="modal" id="shortcutsModal">
+    <div class="modal-overlay" onclick="closeShortcutsModal()"></div>
+    <div class="modal-box modal-small">
+        <div class="modal-header">
+            <h3>⌨️ Keyboard Shortcuts</h3>
+            <button class="modal-close" onclick="closeShortcutsModal()">×</button>
+        </div>
+        <div class="modal-body shortcuts-body">
+            <div class="shortcut-item">
+                <kbd>Ctrl</kbd> + <kbd>N</kbd>
+                <span>Add new student</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Ctrl</kbd> + <kbd>F</kbd>
+                <span>Focus search</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Ctrl</kbd> + <kbd>E</kbd>
+                <span>Export to CSV</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Esc</kbd>
+                <span>Close modal</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Ctrl</kbd> + <kbd>D</kbd>
+                <span>Toggle dark mode</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Delete</kbd>
+                <span>Delete selected</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Install PWA Button -->
+<button class="pwa-install-btn" id="installBtn" style="display: none;">
+    📲 Install App
+</button>
+
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
